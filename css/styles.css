@@ -104,6 +104,20 @@ html, body{
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Fluid root sizing: every rem-based size in this file (font-size, padding,
+ * margin, gap, icon/button dimensions, border-radius...) is relative to this,
+ * so the whole layout scales continuously with viewport width like a poster
+ * being resized, instead of jumping between fixed breakpoint sizes. Passes
+ * exactly through 16px at the 1920px reference this design was built against,
+ * scales down toward 14px at the 900px desktop breakpoint, and grows gently
+ * beyond 1920 for larger monitors. Mobile (<900px) keeps the browser default
+ * (16px) — that layout was tuned independently and shouldn't shrink further.
+ */
+@media (min-width: 900px){
+  html{ font-size: clamp(0.875rem, 0.7647rem + 0.196vw, 1.35rem); }
+}
+
 img{ max-width: 100%; display: block; }
 
 button{ font-family: inherit; cursor: pointer; }
@@ -180,7 +194,7 @@ a{ color: inherit; }
   top: 50%;
   transform: translateY(-50%);
   width: 2.75rem; height: 2.75rem;
-  border-radius: 999px;
+  border-radius: 50%;
   border: 1.5px solid var(--accent-soft, #d8bd7c);
   background: rgba(10, 12, 10, .2);
   backdrop-filter: blur(3px);
@@ -207,8 +221,8 @@ a{ color: inherit; }
   display: flex;
   flex-direction: column;
   padding: 2.75rem 2.75rem 2rem;
-  min-width: 320px;
-  max-width: 640px;
+  min-width: 20rem;
+  max-width: 40rem;
 }
 
 .brand{
@@ -534,7 +548,7 @@ a{ color: inherit; }
 /* ---------------- Privacy policy page ---------------- */
 
 .policy-page{
-  max-width: 780px;
+  max-width: 48.75rem;
   margin: 0 auto;
   padding: 3rem 1.5rem 5rem;
   background: var(--sa-cream, #efe6d2);
