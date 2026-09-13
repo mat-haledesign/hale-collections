@@ -12,14 +12,14 @@
   /* South Africa theme (default) */
   --sa-bg: #122921;
   --sa-bg-alt: #0e211a;
-  --sa-accent: #c9a24b;
+  --sa-accent: #CAA76A;
   --sa-accent-soft: #d8bd7c;
   --sa-cream: #efe6d2;
-  --sa-text: #f4ecd9;
+  --sa-text: #CAA76A;
   --sa-text-dim: #cfc3a4;
   --sa-input-bg: #efe6d2;
   --sa-input-text: #122921;
-  --sa-btn-bg: #c9a24b;
+  --sa-btn-bg: #CAA76A;
   --sa-btn-text: #14251e;
   --sa-border: rgba(239, 230, 210, 0.25);
 
@@ -220,21 +220,22 @@ a{ color: inherit; }
   color: var(--text);
   display: flex;
   flex-direction: column;
-  padding: 2.75rem 2.75rem 2rem;
+  padding: 2.75rem 2rem 2rem;
   min-width: 20rem;
-  max-width: 40rem;
+  max-width: 60rem;
 }
 
 .brand{
   display: flex;
   align-items: center;
   gap: .85rem;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2.75rem;
+  padding-left: 2.5rem;
 }
 
 .brand__mark{
-  width: 3.1rem;
-  height: 3.1rem;
+  width: 6.5rem;
+  height: 6.5rem;
   flex-shrink: 0;
 }
 
@@ -243,7 +244,7 @@ a{ color: inherit; }
 .brand__title{
   font-family: var(--font-serif);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.75rem;
   line-height: 1.15;
   letter-spacing: .01em;
   color: var(--accent);
@@ -267,29 +268,32 @@ a{ color: inherit; }
 .eyebrow{
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: .75rem;
+  font-size: 1rem;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--accent);
   margin: 0 0 1rem;
+  padding-left: 2.5rem;
 }
 
 .headline{
   font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 1.6rem;
+  font-weight: 500;
+  font-size: 1.1rem;
   line-height: 1.3;
   margin: 0 0 1.1rem;
+  padding-left: 2.5rem;
 }
 
 .copy{
-  font-size: .95rem;
-  line-height: 1.6;
+  font-size: 1.1rem;
+  line-height: 1.3;
   color: var(--text);
   margin: 0 0 1.1rem;
+  padding-left: 2.5rem;
 }
 
-.copy:last-of-type{ margin-bottom: 1.75rem; }
+.copy:last-of-type{ margin-bottom: 2.75rem; }
 
 .copy strong{ color: var(--accent-soft); }
 
@@ -308,7 +312,7 @@ a{ color: inherit; }
   color: var(--text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: .8rem;
+  font-size: 1rem;
   letter-spacing: .06em;
   padding: .95rem .5rem;
   text-transform: uppercase;
@@ -334,7 +338,7 @@ a{ color: inherit; }
   color: var(--btn-text);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: .85rem;
+  font-size: 1rem;
   letter-spacing: .08em;
   text-transform: uppercase;
   padding: 1.05rem 1rem;
@@ -385,6 +389,7 @@ a{ color: inherit; }
   text-transform: uppercase;
   padding: 0 0 1.25rem;
   align-self: flex-start;
+  padding-left: 2.5rem;
 }
 
 /* ---------------- Form ---------------- */
@@ -394,6 +399,7 @@ a{ color: inherit; }
   flex-direction: column;
   gap: .85rem;
   margin-bottom: 1.1rem;
+  margin-top: 2rem;
 }
 
 .field{ position: relative; }
@@ -408,7 +414,7 @@ a{ color: inherit; }
   color: var(--input-text);
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: .88rem;
+  font-size: 1rem;
   padding: 1rem 2.75rem 1rem 1rem;
 }
 
@@ -452,7 +458,8 @@ a{ color: inherit; }
   display: flex;
   align-items: flex-start;
   gap: .6rem;
-  margin-bottom: 1.25rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   font-size: .78rem;
   line-height: 1.45;
   color: var(--text-dim);
@@ -503,7 +510,7 @@ a{ color: inherit; }
 
 .panel-footer{
   margin-top: auto;
-  padding-top: 1.5rem;
+  padding-top: 5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -511,6 +518,7 @@ a{ color: inherit; }
   font-size: .68rem;
   color: var(--text-dim);
   letter-spacing: .01em;
+  opacity: 0.75;
 }
 
 .panel-footer a{ color: var(--text-dim); text-decoration: underline; }
@@ -525,20 +533,40 @@ a{ color: inherit; }
 
 /* ---------------- Responsive ---------------- */
 
+/*
+ * Mobile sizing lives entirely in this block, independent of the desktop
+ * values above. Edit anything here without touching the desktop rules —
+ * each property below overrides its desktop counterpart only under 900px.
+ */
 @media (max-width: 900px){
   .app{ flex-direction: column; }
   .stage-media{ flex: none; aspect-ratio: 3 / 4; min-height: 0; }
   .stage-panel{
     flex: none;
     max-width: none;
+    min-width: 0;
     padding: 2.25rem 1.5rem 1.75rem;
   }
   .panel-body{ justify-content: flex-start; }
-  .headline{ font-size: 1.4rem; }
+
+  .brand{
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+  }
+  .brand__mark{ width: 3.1rem; height: 3.1rem; }
+  .brand__title{ font-size: 1.15rem; }
+
+  .eyebrow{ padding-left: 0; }
+  .headline{ font-size: 1.4rem; padding-left: 0; }
+  .copy{ padding-left: 0; }
+  .btn-link-back{ padding-left: 0; }
+
+  .panel-footer{ padding-top: 1.5rem; }
 }
 
 @media (max-width: 420px){
   .stage-panel{ padding: 2rem 1.25rem 1.5rem; }
+  .brand__mark{ width: 2.6rem; height: 2.6rem; }
   .brand__title{ font-size: 1.05rem; }
 }
 

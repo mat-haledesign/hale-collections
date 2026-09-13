@@ -270,11 +270,11 @@
     ctx.fillRect(0, H * 0.72, W, H * 0.28);
 
     ctx.textAlign = "center";
-    ctx.fillStyle = isNz ? "#ffffff" : "#c9a24b";
+    ctx.fillStyle = isNz ? "#ffffff" : "#CAA76A";
     ctx.font = "700 30px Inter, sans-serif";
     ctx.fillText("THE GREATEST RIVALRY", W / 2, H * 0.86);
 
-    ctx.fillStyle = isNz ? "#d9d9d9" : "#f4ecd9";
+    ctx.fillStyle = isNz ? "#d9d9d9" : "#CAA76A";
     ctx.font = "400 26px Inter, sans-serif";
     ctx.fillText("105 years. Two nations. One enduring contest.", W / 2, H * 0.895);
 
