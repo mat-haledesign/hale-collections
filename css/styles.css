@@ -13,10 +13,10 @@
   --sa-bg: #122921;
   --sa-bg-alt: #0e211a;
   --sa-accent: #CAA76A;
-  --sa-accent-soft: #d8bd7c;
+  --sa-accent-soft: #CAA76A;
   --sa-cream: #efe6d2;
-  --sa-text: #CAA76A;
-  --sa-text-dim: #cfc3a4;
+  --sa-text: #EFE5D1;
+  --sa-text-dim: #EFE5D1;
   --sa-input-bg: #efe6d2;
   --sa-input-text: #122921;
   --sa-btn-bg: #CAA76A;
@@ -26,11 +26,11 @@
   /* New Zealand theme */
   --nz-bg: #0a0a0a;
   --nz-bg-alt: #050505;
-  --nz-accent: #ffffff;
+  --nz-accent: #BDBDBD;
   --nz-accent-soft: #d9d9d9;
   --nz-cream: #d9d9d9;
-  --nz-text: #ffffff;
-  --nz-text-dim: #b7b7b7;
+  --nz-text: #BDBDBD;
+  --nz-text-dim: #BDBDBD;
   --nz-input-bg: #d9d9d9;
   --nz-input-text: #0a0a0a;
   --nz-btn-bg: #d9d9d9;
@@ -468,7 +468,6 @@ a{ color: inherit; }
 .consent input[type="checkbox"]{
   margin-top: .2rem;
   width: 1rem;
-  height: 1rem;
   flex-shrink: 0;
   accent-color: var(--accent);
 }

@@ -60,11 +60,6 @@
       btn.classList.toggle("is-selected", btn.dataset.themeChoice === theme);
     });
 
-    const jerseySelect = document.getElementById("jersey");
-    if (jerseySelect && !jerseySelect.dataset.touched) {
-      jerseySelect.value = theme;
-    }
-
     if (!changed) return;
 
     if (animate) {
@@ -80,10 +75,6 @@
 
   document.querySelectorAll(".theme-toggle__btn").forEach(btn => {
     btn.addEventListener("click", () => setTheme(btn.dataset.themeChoice));
-  });
-
-  document.getElementById("jersey").addEventListener("change", function () {
-    this.dataset.touched = "true";
   });
 
   /* ---------------- Panel view switching ---------------- */
@@ -308,4 +299,10 @@
 
   populateSelects();
   setTheme("sa", { animate: false });
+
+  // Testing aid: open index.html?view=thankyou to preview that screen
+  // directly, without submitting the form or needing the backend live.
+  if (new URLSearchParams(location.search).get("view") === "thankyou") {
+    showView("thankyou");
+  }
 })();
