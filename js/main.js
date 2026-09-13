@@ -45,6 +45,29 @@
   document.getElementById("mediaPrev").addEventListener("click", () => showSlide(state.slideIndex - 1));
   document.getElementById("mediaNext").addEventListener("click", () => showSlide(state.slideIndex + 1));
 
+  /* Swipe support (mobile). Arrow buttons above keep working as-is. */
+  const stageMedia = document.querySelector(".stage-media");
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  stageMedia.addEventListener("touchstart", (e) => {
+    const t = e.changedTouches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }, { passive: true });
+
+  stageMedia.addEventListener("touchend", (e) => {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    // Require a deliberate, mostly-horizontal swipe so vertical page
+    // scrolling and accidental taps aren't mistaken for a swipe.
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      showSlide(state.slideIndex + (dx < 0 ? 1 : -1));
+    }
+  }, { passive: true });
+
   /* ---------------- Theme ---------------- */
 
   function setTheme(theme, opts) {
