@@ -6,7 +6,7 @@ every registration into Mailchimp via a small Cloudflare Worker.
 
 ```
 index.html               the whole site (desktop + mobile, responsive CSS)
-privacy-policy/index.html  POPIA privacy policy, served at /privacy-policy/
+privacy-policy.html      POPIA privacy policy, linked from the consent checkbox
 css/styles.css           theme variables + layout
 js/config.js             prices, FX rates, countries, sizes, image paths — edit here
 js/main.js               carousel, theme toggle, form logic, share/download
@@ -177,7 +177,7 @@ Pages' automatic HTTPS/certificate), do this:
 - **FX rates / price bands**: edit `js/config.js` → `CONFIG.fx` and `CONFIG.priceBands`.
 - **Countries / sizes**: edit the arrays in `js/config.js`.
 - **Share text / URL**: edit `CONFIG.shareUrl` / `CONFIG.shareText` in `js/config.js`.
-- **Privacy policy placeholders**: `privacy-policy/index.html` still has a few highlighted
+- **Privacy policy placeholders**: `privacy-policy.html` still has a few highlighted
   `TODO` spans (hosting/analytics providers, physical address, final URL) — fill those
   in before you launch publicly.
 
