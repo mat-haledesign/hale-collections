@@ -3,40 +3,11 @@
    Theme is switched by setting data-theme="sa" | "nz" on <html>.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap');
-
-/*
- * Decimal is a commercial typeface (Displaay Type Foundry) and isn't on Google
- * Fonts, so it's self-hosted. Drop your licensed .woff2 files into
- * assets/fonts/decimal/ using the filenames below — see README.md for details.
- * Until those files exist, the system-font fallback stack is used instead, so
- * the site still looks correct, just not pixel-identical to Figma.
- */
-@font-face{
-  font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Medium-Pro.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Semibold-Pro.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face{
-  font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Bold-Pro.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@500;600;700&display=swap');
 
 :root{
   --font-serif: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
-  --font-sans: 'Decimal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 
   /* South Africa theme (default) */
   --sa-bg: #122921;
@@ -204,30 +175,30 @@ a{ color: inherit; }
   padding: 2rem;
 }
 
-.stage-media__nav{
-  position: absolute;
-  left: 0; right: 0; bottom: 1.25rem;
-  display: flex;
-  justify-content: center;
-  gap: .75rem;
-  z-index: 5;
-}
-
 .stage-media__arrow{
-  width: 2.5rem; height: 2.5rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.75rem; height: 2.75rem;
   border-radius: 999px;
-  border: none;
-  background: rgba(255,255,255,.85);
-  color: #14251e;
-  font-size: 1.1rem;
+  border: 1.5px solid var(--accent-soft, #d8bd7c);
+  background: rgba(10, 12, 10, .2);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  color: var(--accent-soft, #d8bd7c);
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform .15s ease, background .15s ease;
+  z-index: 5;
+  transition: transform .15s ease, background .15s ease, border-color .4s ease, color .4s ease;
 }
 
-.stage-media__arrow:hover{ background: #fff; transform: scale(1.05); }
-.stage-media__arrow:active{ transform: scale(.95); }
+#mediaPrev{ left: 1.5rem; transform: translateY(-50%); }
+#mediaNext{ right: 1.5rem; transform: translateY(-50%); }
+
+.stage-media__arrow:hover{ background: rgba(10, 12, 10, .4); transform: translateY(-50%) scale(1.05); }
+.stage-media__arrow:active{ transform: translateY(-50%) scale(.95); }
 
 .stage-panel{
   flex: 1 1 38%;
@@ -244,6 +215,7 @@ a{ color: inherit; }
   display: flex;
   align-items: center;
   gap: .85rem;
+  margin-top: 14vh;
   margin-bottom: 2.25rem;
 }
 
@@ -550,6 +522,7 @@ a{ color: inherit; }
     padding: 2.25rem 1.5rem 1.75rem;
   }
   .panel-view{ justify-content: flex-start; }
+  .brand{ margin-top: 0; }
   .headline{ font-size: 1.4rem; }
 }
 

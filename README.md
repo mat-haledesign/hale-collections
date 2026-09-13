@@ -13,25 +13,17 @@ js/main.js               carousel, theme toggle, form logic, share/download
 assets/logo/             placeholder logo — swap for your real exported emblem
 assets/images/sa/        South Africa (green) product photography
 assets/images/nz/        New Zealand (black) product photography
-assets/fonts/decimal/    self-hosted Decimal webfont files (see §1a)
 worker/                  Cloudflare Worker that writes registrations into Mailchimp
 ```
 
 ## 1a. Fonts
 
-- **Libre Caslon Text** (the "The Greatest Rivalry" wordmark only) is a free Google
-  Font and is already wired up via the `@import` at the top of `css/styles.css` — no
-  action needed.
-- **Decimal** (everything else — body copy, buttons, labels, headings) is a commercial
-  typeface, so it can't be pulled from a free CDN. It's self-hosted from
-  `assets/fonts/decimal/`, currently:
-  ```
-  assets/fonts/decimal/Decimal-Medium-Pro.woff2     (weight 500)
-  assets/fonts/decimal/Decimal-Semibold-Pro.woff2   (weight 600)
-  assets/fonts/decimal/Decimal-Bold-Pro.woff2       (weight 700)
-  ```
-  already loaded and in use. If you ever swap in differently-named files, update the
-  three `@font-face` `src` paths at the top of `css/styles.css` to match.
+Both fonts are free Google Fonts, loaded via the `@import` at the top of
+`css/styles.css` — no action needed:
+
+- **Libre Caslon Text** — the "The Greatest Rivalry" wordmark only.
+- **Inter** (weights 500/600/700) — everything else: body copy, buttons, labels,
+  headings, the privacy policy.
 
 ## 1b. Add your real images
 
