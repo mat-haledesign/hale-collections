@@ -229,7 +229,6 @@ a{ color: inherit; }
   display: flex;
   align-items: center;
   gap: .85rem;
-  margin-top: 14vh;
   margin-bottom: 2.25rem;
 }
 
@@ -255,13 +254,12 @@ a{ color: inherit; }
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 .panel-view{
   display: none;
-  flex: 1;
   flex-direction: column;
-  justify-content: flex-end;
 }
 
 .panel-view.is-active{ display: flex; }
@@ -535,8 +533,7 @@ a{ color: inherit; }
     max-width: none;
     padding: 2.25rem 1.5rem 1.75rem;
   }
-  .panel-view{ justify-content: flex-start; }
-  .brand{ margin-top: 0; }
+  .panel-body{ justify-content: flex-start; }
   .headline{ font-size: 1.4rem; }
 }
 
