@@ -33,16 +33,20 @@ const CONFIG = {
   // using these exact filenames, or edit the paths below to match what you supply.
   carousel: {
     sa: [
-      "assets/images/sa/01-hero.jpg",
-      "assets/images/sa/02-teaser.jpg",
-      "assets/images/sa/03-detail.jpg",
-      "assets/images/sa/04-tag.jpg"
+      "assets/images/sa/01-hero.png",
+      "assets/images/sa/02-chest.png",
+      "assets/images/sa/03-collar.png",
+      "assets/images/sa/04-back.png",
+      "assets/images/sa/05-tag.png",
+      "assets/images/sa/06-sleeve.png"
     ],
     nz: [
-      "assets/images/nz/01-hero.jpg",
-      "assets/images/nz/02-teaser.jpg",
-      "assets/images/nz/03-detail.jpg",
-      "assets/images/nz/04-tag.jpg"
+      "assets/images/nz/01-hero.png",
+      "assets/images/nz/02-chest.png",
+      "assets/images/nz/03-collar.png",
+      "assets/images/nz/04-back.png",
+      "assets/images/nz/05-tag.png",
+      "assets/images/nz/06-sleeve.png"
     ]
   },
 
@@ -57,8 +61,8 @@ const CONFIG = {
     nz: "assets/logo/logo-white.svg"
   },
 
-  shareUrl: "https://thegreatestrivalry.com",
-  shareText: "105 years. Two nations. One enduring contest. Vote on whether this jersey should be made —"
+  shareUrl: "https://hale-collections.com",
+  shareText: "105 years. Two nations. One enduring contest. Vote on whether this jersey should be made -"
 };
 
 function formatZAR(amount) {
