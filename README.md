@@ -177,9 +177,9 @@ Pages' automatic HTTPS/certificate), do this:
 - **FX rates / price bands**: edit `js/config.js` → `CONFIG.fx` and `CONFIG.priceBands`.
 - **Countries / sizes**: edit the arrays in `js/config.js`.
 - **Share text / URL**: edit `CONFIG.shareUrl` / `CONFIG.shareText` in `js/config.js`.
-- **Privacy policy placeholders**: `privacy-policy.html` still has a few highlighted
-  `TODO` spans (hosting/analytics providers, physical address, final URL) — fill those
-  in before you launch publicly.
+- **Privacy policy placeholder**: `privacy-policy.html` still has one highlighted
+  `TODO` span for the physical business address — fill that in before you launch
+  publicly.
 
 ## 8. Testing checklist before going live
 
