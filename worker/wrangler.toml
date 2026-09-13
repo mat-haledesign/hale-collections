@@ -1,0 +1,17 @@
+name = "greatest-rivalry-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# Non-secret config. Secrets (MAILCHIMP_API_KEY) are set separately via
+# `wrangler secret put MAILCHIMP_API_KEY` — see README.md.
+[vars]
+MAILCHIMP_SERVER_PREFIX = "us21"
+MAILCHIMP_DATA_LIST_ID = "REPLACE_WITH_DATA_AUDIENCE_ID"
+MAILCHIMP_MARKETING_LIST_ID = "REPLACE_WITH_MARKETING_AUDIENCE_ID"
+ALLOWED_ORIGIN = "https://thegreatestrivalry.com"
+
+# Once you have a custom domain on Cloudflare, uncomment and adjust this
+# so the worker is reachable at https://thegreatestrivalry.com/api/*
+# [[routes]]
+# pattern = "thegreatestrivalry.com/api/*"
+# zone_name = "thegreatestrivalry.com"
