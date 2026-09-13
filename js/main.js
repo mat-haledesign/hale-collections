@@ -250,53 +250,17 @@
 
   /* ---------------- Download for stories ---------------- */
 
+  // storyTemplate images are already finished, ready-to-post graphics
+  // (headline, CTA and watermark baked in by design) — just download them
+  // as-is, no canvas compositing on top.
   document.getElementById("downloadStory").addEventListener("click", async function () {
     const jersey = document.getElementById("jersey").value || state.theme;
     const imgSrc = jersey === "nz" ? CONFIG.storyTemplate.nz : CONFIG.storyTemplate.sa;
-    const isNz = jersey === "nz";
-
-    const canvas = document.getElementById("storyCanvas");
-    const ctx = canvas.getContext("2d");
-    const W = canvas.width, H = canvas.height;
-
-    // background
-    ctx.fillStyle = isNz ? "#0a0a0a" : "#122921";
-    ctx.fillRect(0, 0, W, H);
 
     try {
-      const img = await loadImage(imgSrc);
-      const scale = Math.max(W / img.width, (H * 0.78) / img.height);
-      const w = img.width * scale, h = img.height * scale;
-      const x = (W - w) / 2, y = H * 0.03;
-      ctx.drawImage(img, x, y, w, h);
-    } catch (err) {
-      ctx.fillStyle = "#666";
-      ctx.font = "40px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Add " + imgSrc, W / 2, H / 2);
-    }
-
-    // gradient footer band for legibility
-    const grad = ctx.createLinearGradient(0, H * 0.72, 0, H);
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, isNz ? "rgba(0,0,0,0.92)" : "rgba(18,41,33,0.92)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, H * 0.72, W, H * 0.28);
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = isNz ? "#ffffff" : "#CAA76A";
-    ctx.font = "700 30px Inter, sans-serif";
-    ctx.fillText("THE GREATEST RIVALRY", W / 2, H * 0.86);
-
-    ctx.fillStyle = isNz ? "#d9d9d9" : "#CAA76A";
-    ctx.font = "400 26px Inter, sans-serif";
-    ctx.fillText("105 years. Two nations. One enduring contest.", W / 2, H * 0.895);
-
-    ctx.font = "600 24px Inter, sans-serif";
-    ctx.fillStyle = isNz ? "#d9d9d9" : "#d8bd7c";
-    ctx.fillText("Vote at " + CONFIG.shareUrl.replace(/^https?:\/\//, ""), W / 2, H * 0.94);
-
-    canvas.toBlob(blob => {
+      const res = await fetch(imgSrc);
+      if (!res.ok) throw new Error("Story image not found: " + imgSrc);
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -305,18 +269,11 @@
       a.click();
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-    }, "image/png");
+    } catch (err) {
+      console.error(err);
+      alert("Couldn't prepare that download — please try again.");
+    }
   });
-
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
 
   /* ---------------- Init ---------------- */
 

@@ -52,8 +52,8 @@ const CONFIG = {
 
   // Full-bleed portrait image used as the background for the "download for stories" image.
   storyTemplate: {
-    sa: "assets/images/sa/02-teaser.jpg",
-    nz: "assets/images/nz/02-teaser.jpg"
+    sa: "assets/images/sa/07-download.png",
+    nz: "assets/images/nz/07-download.png"
   },
 
   logo: {
