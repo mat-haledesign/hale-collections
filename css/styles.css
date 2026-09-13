@@ -14,21 +14,21 @@
  */
 @font-face{
   font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Medium.woff2') format('woff2');
+  src: url('../assets/fonts/decimal/Decimal-Medium-Pro.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Semibold.woff2') format('woff2');
+  src: url('../assets/fonts/decimal/Decimal-Semibold-Pro.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face{
   font-family: 'Decimal';
-  src: url('../assets/fonts/decimal/Decimal-Bold.woff2') format('woff2');
+  src: url('../assets/fonts/decimal/Decimal-Bold-Pro.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -99,6 +99,29 @@ html[data-theme="nz"]{
 
 *, *::before, *::after{ box-sizing: border-box; }
 
+/* Smooth color cross-fade whenever the SA/NZ theme toggle swaps CSS variables. */
+body,
+.stage-panel,
+.brand__title,
+.eyebrow,
+.headline,
+.copy,
+.theme-toggle__btn,
+.btn-primary,
+.btn-secondary,
+.btn-link-back,
+.field input,
+.field select,
+.field--select::after,
+.consent,
+.form-note,
+.panel-footer,
+.panel-footer a,
+.panel-footer__logo,
+.form-status{
+  transition: background-color .4s ease, color .4s ease, border-color .4s ease;
+}
+
 html, body{
   margin: 0;
   padding: 0;
@@ -143,7 +166,10 @@ a{ color: inherit; }
 .stage-media__track{
   position: absolute;
   inset: 0;
+  transition: opacity .3s ease;
 }
+
+.stage-media__track.is-fading{ opacity: 0; }
 
 .stage-media__slide{
   position: absolute;
@@ -249,6 +275,7 @@ a{ color: inherit; }
   display: none;
   flex: 1;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 .panel-view.is-active{ display: flex; }
@@ -522,6 +549,7 @@ a{ color: inherit; }
     max-width: none;
     padding: 2.25rem 1.5rem 1.75rem;
   }
+  .panel-view{ justify-content: flex-start; }
   .headline{ font-size: 1.4rem; }
 }
 

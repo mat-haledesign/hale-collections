@@ -47,8 +47,12 @@
 
   /* ---------------- Theme ---------------- */
 
-  function setTheme(theme) {
+  function setTheme(theme, opts) {
+    const animate = !opts || opts.animate !== false;
+    const changed = state.theme !== theme || !state.initialized;
+
     state.theme = theme;
+    state.initialized = true;
     root.setAttribute("data-theme", theme);
     document.getElementById("logoImg").src = CONFIG.logo[theme];
 
@@ -61,7 +65,17 @@
       jerseySelect.value = theme;
     }
 
-    renderSlides();
+    if (!changed) return;
+
+    if (animate) {
+      mediaTrack.classList.add("is-fading");
+      setTimeout(() => {
+        renderSlides();
+        mediaTrack.classList.remove("is-fading");
+      }, 260);
+    } else {
+      renderSlides();
+    }
   }
 
   document.querySelectorAll(".theme-toggle__btn").forEach(btn => {
@@ -293,5 +307,5 @@
   /* ---------------- Init ---------------- */
 
   populateSelects();
-  setTheme("sa");
+  setTheme("sa", { animate: false });
 })();

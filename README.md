@@ -13,7 +13,7 @@ js/main.js               carousel, theme toggle, form logic, share/download
 assets/logo/             placeholder logo — swap for your real exported emblem
 assets/images/sa/        South Africa (green) product photography
 assets/images/nz/        New Zealand (black) product photography
-assets/fonts/decimal/    self-hosted Decimal webfont files (see §1b)
+assets/fonts/decimal/    self-hosted Decimal webfont files (see §1a)
 worker/                  Cloudflare Worker that writes registrations into Mailchimp
 ```
 
@@ -23,17 +23,15 @@ worker/                  Cloudflare Worker that writes registrations into Mailch
   Font and is already wired up via the `@import` at the top of `css/styles.css` — no
   action needed.
 - **Decimal** (everything else — body copy, buttons, labels, headings) is a commercial
-  typeface, so it can't be pulled from a free CDN. `css/styles.css` already has
-  `@font-face` rules pointing at:
+  typeface, so it can't be pulled from a free CDN. It's self-hosted from
+  `assets/fonts/decimal/`, currently:
   ```
-  assets/fonts/decimal/Decimal-Medium.woff2     (weight 500)
-  assets/fonts/decimal/Decimal-Semibold.woff2   (weight 600)
-  assets/fonts/decimal/Decimal-Bold.woff2       (weight 700)
+  assets/fonts/decimal/Decimal-Medium-Pro.woff2     (weight 500)
+  assets/fonts/decimal/Decimal-Semibold-Pro.woff2   (weight 600)
+  assets/fonts/decimal/Decimal-Bold-Pro.woff2       (weight 700)
   ```
-  Export those three weights from your Decimal license as `.woff2` and drop them in
-  that folder with those exact names — see `assets/fonts/decimal/PUT-FONT-FILES-HERE.txt`
-  for conversion options. Until they're added, the site falls back to the system
-  sans-serif font automatically, so nothing breaks in the meantime.
+  already loaded and in use. If you ever swap in differently-named files, update the
+  three `@font-face` `src` paths at the top of `css/styles.css` to match.
 
 ## 1b. Add your real images
 
