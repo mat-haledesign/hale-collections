@@ -1,0 +1,23 @@
+Decimal is a commercial typeface (Displaay Type Foundry) — it isn't available on
+Google Fonts or any free CDN, so it has to be self-hosted from your own license.
+
+Export/convert these three weights to WOFF2 and place them in this folder with
+these exact filenames (referenced by css/styles.css):
+
+  Decimal-Medium.woff2      (weight 500)
+  Decimal-Semibold.woff2    (weight 600)
+  Decimal-Bold.woff2        (weight 700)
+
+Where to get them:
+  - If you have Decimal through Adobe Fonts / a foundry license that only gives
+    you .otf/.ttf, convert to .woff2 with a tool like https://cloudconvert.com/ttf-to-woff2
+    or the `fonttools` CLI (`pip install fonttools brotli` then
+    `fonttools varLib.instancer` / `fonttools ttLib.woff2` — ask if you want an
+    exact command once you have the source files).
+  - Check your Displaay Type Foundry purchase/download page for a webfont kit —
+    many foundries provide ready-made .woff2 files directly.
+
+Until these files exist, the site falls back to the system sans-serif font
+(San Francisco / Segoe UI / Helvetica) so it still looks clean — just not a
+pixel-perfect match to the Figma comp. Delete this file once the real fonts
+are in place.

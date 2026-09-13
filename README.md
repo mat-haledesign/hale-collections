@@ -13,10 +13,29 @@ js/main.js               carousel, theme toggle, form logic, share/download
 assets/logo/             placeholder logo — swap for your real exported emblem
 assets/images/sa/        South Africa (green) product photography
 assets/images/nz/        New Zealand (black) product photography
+assets/fonts/decimal/    self-hosted Decimal webfont files (see §1b)
 worker/                  Cloudflare Worker that writes registrations into Mailchimp
 ```
 
-## 1. Add your real images
+## 1a. Fonts
+
+- **Libre Caslon Text** (the "The Greatest Rivalry" wordmark only) is a free Google
+  Font and is already wired up via the `@import` at the top of `css/styles.css` — no
+  action needed.
+- **Decimal** (everything else — body copy, buttons, labels, headings) is a commercial
+  typeface, so it can't be pulled from a free CDN. `css/styles.css` already has
+  `@font-face` rules pointing at:
+  ```
+  assets/fonts/decimal/Decimal-Medium.woff2     (weight 500)
+  assets/fonts/decimal/Decimal-Semibold.woff2   (weight 600)
+  assets/fonts/decimal/Decimal-Bold.woff2       (weight 700)
+  ```
+  Export those three weights from your Decimal license as `.woff2` and drop them in
+  that folder with those exact names — see `assets/fonts/decimal/PUT-FONT-FILES-HERE.txt`
+  for conversion options. Until they're added, the site falls back to the system
+  sans-serif font automatically, so nothing breaks in the meantime.
+
+## 1b. Add your real images
 
 Drop your renders into `assets/images/sa/` and `assets/images/nz/`, using these exact
 filenames (or edit the paths in `js/config.js` to match whatever you name them):
