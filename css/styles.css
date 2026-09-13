@@ -80,6 +80,7 @@ body,
 .theme-toggle__btn,
 .btn-primary,
 .btn-secondary,
+#shareWhatsapp svg,
 .btn-link-back,
 .field input,
 .field select,
@@ -356,9 +357,9 @@ a{ color: inherit; }
   justify-content: center;
   gap: .6rem;
   width: 100%;
-  border: 1px solid var(--border);
+  border: 1px solid var(--accent);
   background: transparent;
-  color: var(--text);
+  color: var(--accent);
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: .8rem;
@@ -366,18 +367,31 @@ a{ color: inherit; }
   text-transform: uppercase;
   padding: 1rem;
   margin-bottom: .9rem;
-  transition: background .15s ease;
+  transition: background .15s ease, color .4s ease, border-color .4s ease;
 }
 
 .btn-secondary:hover{ background: rgba(255,255,255,.06); }
 
-.btn-secondary--fill{
+/* Share on WhatsApp: cream fill, dark text, but the icon keeps its own
+   accent-gold color rather than matching the text (matches the exported asset). */
+.btn-fill-cream{
   background: var(--cream);
   color: var(--bg);
   border-color: var(--cream);
 }
 
-.btn-secondary--fill:hover{ filter: brightness(1.05); background: var(--cream); }
+.btn-fill-cream:hover{ filter: brightness(1.05); background: var(--cream); }
+
+#shareWhatsapp svg{ color: var(--accent); }
+
+/* Copy Link: accent fill, dark text/icon (matches the exported asset). */
+.btn-fill-accent{
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
+}
+
+.btn-fill-accent:hover{ filter: brightness(1.05); background: var(--btn-bg); }
 
 .btn-link-back{
   background: none;
