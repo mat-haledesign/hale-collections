@@ -10,10 +10,12 @@
   /* ---------------- Carousel ---------------- */
 
   const mediaTrack = document.getElementById("mediaTrack");
+  const mediaDots = document.getElementById("mediaDots");
 
   function renderSlides() {
     const images = CONFIG.carousel[state.theme] || [];
     mediaTrack.innerHTML = "";
+    mediaDots.innerHTML = "";
     images.forEach((src, i) => {
       const slide = document.createElement("div");
       slide.className = "stage-media__slide" + (i === 0 ? " is-active" : "");
@@ -30,6 +32,13 @@
 
       slide.appendChild(img);
       mediaTrack.appendChild(slide);
+
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "stage-media__dot" + (i === 0 ? " is-active" : "");
+      dot.setAttribute("aria-label", "Go to image " + (i + 1));
+      dot.addEventListener("click", () => showSlide(i));
+      mediaDots.appendChild(dot);
     });
     state.slideIndex = 0;
   }
@@ -40,6 +49,7 @@
     const count = slides.length;
     state.slideIndex = ((index % count) + count) % count;
     slides.forEach((s, i) => s.classList.toggle("is-active", i === state.slideIndex));
+    mediaDots.querySelectorAll(".stage-media__dot").forEach((d, i) => d.classList.toggle("is-active", i === state.slideIndex));
   }
 
   document.getElementById("mediaPrev").addEventListener("click", () => showSlide(state.slideIndex - 1));
