@@ -80,46 +80,55 @@ You need **two audiences**:
 
 | Audience | Purpose |
 |---|---|
-| **Greatest Rivalry — Registrations** | Every single registrant, regardless of the marketing checkbox. This is your feasibility-study data, sends Mailchimp's own confirmation email ("please check your inbox and confirm your email" on the thank-you screen), and triggers the welcome email once confirmed. |
-| **Greatest Rivalry — Marketing Subscribers** | Only people who ticked "I agree to receive updates…". Use this for future campaign sends. |
+| **Greatest Rivalry — Registrations** | Every single registrant, regardless of the marketing checkbox. This is your feasibility-study data, and sends Mailchimp's own confirmation email ("please check your inbox and confirm your email" on the thank-you screen). |
+| **Greatest Rivalry — Marketing Subscribers** | Only people who ticked "I agree to receive updates…" *and* clicked that same confirmation link. Use this for future campaign sends. |
+
+**One confirmation email covers both.** Nobody gets asked to confirm twice: everyone
+confirms once via the Registrations audience, and if they'd ticked the marketing box,
+that same click is what adds them to Marketing Subscribers too (via a webhook — see
+step 7 below and §5). This makes double opt-in do real work for lead quality — a
+confirmed subscriber is someone who's proven their email address is real and
+deliberately clicked through — without the drop-off of a second identical-looking email.
 
 Steps:
 
 1. **Create the two audiences**: Audience → Create Audience, twice, named as above.
-2. **Double opt-in setting differs per audience**:
-   - **Registrations**: leave double opt-in **on** (default). The Worker adds new
-     contacts here with `status: "pending"`, which makes Mailchimp automatically send
-     its own confirmation email — this *is* the "confirm your email" step promised on
-     the thank-you screen, no custom email infrastructure needed. They only count as
-     `subscribed` once they click it.
-   - **Marketing Subscribers**: **turn off** double opt-in (Audience → Settings →
-     Audience name and defaults → uncheck "Enable double opt-in"). The Worker adds
-     people here as `subscribed` directly — their consent was already captured by the
-     on-site checkbox, so a second confirmation email would just be friction.
+2. **Double opt-in**: leave it **on** (default) for **Registrations** — the Worker adds
+   new contacts there with `status: "pending"`, which makes Mailchimp send its own
+   confirmation email automatically; no custom email infrastructure needed. For
+   **Marketing Subscribers**, leave double opt-in **off** — it doesn't matter either
+   way, since the Worker only ever adds people there with an explicit `status:
+   "subscribed"` (from the webhook, after they've already confirmed via Registrations).
 3. **Add merge fields** to *both* audiences (Audience → Settings → Audience fields and
    *MERGE* tags → Add A Field), using these exact tags so they match the Worker:
    - `COUNTRY` (text)
    - `JERSEY` (text)
    - `SIZE` (text)
    - `PRICE` (text)
+   - `MKTOK` (text) — "Y" or "N", carries the marketing checkbox choice through to the
+     webhook so it knows whether to add the person to Marketing Subscribers once they
+     confirm
 4. **Get your API key**: Account → Extras → API keys → Create A Key. It looks like
    `abcdef123456789-us21` — the part after the dash (`us21`) is your server prefix.
 5. **Get each Audience ID**: Audience → Settings → Audience name and defaults → *Audience ID*.
-6. **Set up the welcome email** (this is the "send everyone a nice welcome/info email"
-   step): Audience → Automations → Create → "When someone joins a list" (a classic
-   automation, trigger event **Subscribes**) → pick the **Registrations** audience as the
-   trigger → design your welcome email (jersey images, project story, etc.) → turn it
-   **on**. Because Registrations uses double opt-in, "Subscribes" fires once someone
-   clicks the confirmation link in Mailchimp's own email — so people get exactly two
-   emails in sequence: Mailchimp's confirmation, then your welcome email.
-7. Keep the **Marketing Subscribers** audience automation-free for now — you'll send
-   manual campaigns to it later when you have updates to share.
+6. **Set up the welcome email**: Audience → Automations → Create → "When someone joins
+   a list" (a classic automation, trigger event **Subscribes**) → pick the
+   **Registrations** audience as the trigger → design your welcome email (jersey
+   images, project story, etc.) → turn it **on**. "Subscribes" fires once someone
+   clicks the confirmation link — so people get exactly two emails in sequence:
+   Mailchimp's confirmation, then your welcome email.
+7. **Webhook** (adds confirmed marketing opt-ins to Marketing Subscribers): this needs
+   the Worker's live URL, so it's the last step in §5 below, after deployment — come
+   back here once that's done.
+8. Keep the **Marketing Subscribers** audience automation-free — you'll send manual
+   campaigns to it later when you have updates to share.
 
 ## 5. Deploy the Cloudflare Worker (the Mailchimp bridge)
 
 The site is static, so it can't call Mailchimp directly without exposing your API key.
-This Worker is a small, free backend that holds the key safely and writes to both
-audiences. You already plan to use Cloudflare for DNS, so this fits naturally.
+This Worker is a small, free backend that holds the key safely, writes to Mailchimp,
+and receives its webhook. You already plan to use Cloudflare for DNS, so this fits
+naturally.
 
 1. Install Wrangler (Cloudflare's CLI) and log in:
    ```
@@ -133,11 +142,17 @@ audiences. You already plan to use Cloudflare for DNS, so this fits naturally.
    - `MAILCHIMP_MARKETING_LIST_ID` → the Marketing Subscribers audience ID
    - `ALLOWED_ORIGIN` → your real site URL (GitHub Pages URL, or your custom domain
      once it's live)
-3. Add your API key as a secret (never put this in wrangler.toml or git):
+3. Add two secrets (never put these in wrangler.toml or git):
    ```
    npx wrangler secret put MAILCHIMP_API_KEY
    ```
-   Paste the full key (e.g. `abcdef123456789-us21`) when prompted.
+   Paste the full key (e.g. `abcdef123456789-us21`) when prompted, then:
+   ```
+   npx wrangler secret put MAILCHIMP_WEBHOOK_SECRET
+   ```
+   Paste any long random string (e.g. generate one with `openssl rand -hex 20`, or
+   just mash the keyboard) — this isn't a Mailchimp value, it's one you invent, used
+   in step 6 below so only Mailchimp's webhook can call this endpoint.
 4. Deploy:
    ```
    npx wrangler deploy
@@ -148,6 +163,15 @@ audiences. You already plan to use Cloudflare for DNS, so this fits naturally.
    apiEndpoint: "https://greatest-rivalry-api.<your-subdomain>.workers.dev/register"
    ```
    Commit and push that change.
+6. **Now go back to Mailchimp and add the webhook**: open the **Registrations**
+   audience → Settings → Webhooks → Create New Webhook. URL:
+   ```
+   https://greatest-rivalry-api.<your-subdomain>.workers.dev/webhook/mailchimp?secret=<the MAILCHIMP_WEBHOOK_SECRET value you generated>
+   ```
+   Under "Update events", check **only** *Subscribes* — uncheck everything else
+   (unsubscribes, profile updates, email changes, cleaned addresses, campaign
+   sending). Save. Mailchimp will immediately GET that URL to validate it; the Worker
+   answers `200 ok` to that automatically.
 
 Test it directly:
 ```
@@ -194,11 +218,14 @@ Pages' automatic HTTPS/certificate), do this:
 - [ ] Toggle SA ↔ NZ theme — colors, logo and carousel images all switch
 - [ ] Carousel arrows work on both mobile and desktop widths
 - [ ] Form validation catches missing email / country / jersey / price
-- [ ] Submitting a real test entry appears in **both** Mailchimp audiences when opted
-      in (Registrations as `pending`, Marketing as `subscribed`), and **only** the
-      Registrations audience (as `pending`) when not opted in
-- [ ] Mailchimp's confirmation email arrives for the test registration; clicking it
-      flips the contact to `subscribed` and the welcome-email automation fires shortly after
+- [ ] Submitting a real test entry appears in the Registrations audience as `pending`
+      (regardless of the marketing checkbox) — nowhere in Marketing Subscribers yet
+- [ ] Mailchimp's confirmation email arrives; clicking it flips the Registrations
+      contact to `subscribed` and the welcome-email automation fires shortly after
+- [ ] If the marketing checkbox was ticked, that same click also creates the contact
+      in Marketing Subscribers as `subscribed` (check the webhook fired — Registrations
+      audience → Settings → Webhooks → should show recent activity/no errors); if it
+      wasn't ticked, confirm they're still absent from Marketing Subscribers
 - [ ] "Download for Stories" produces a 1080×1920 PNG with the right jersey colour
 - [ ] "Share on WhatsApp" opens with pre-filled text and link
 - [ ] "Copy Link" copies the URL (and has a clipboard-denied fallback via `prompt()`)

@@ -1,15 +1,31 @@
 /**
  * Cloudflare Worker: receives registrations from thegreatestrivalry.com
- * and writes them into two Mailchimp audiences:
- *   - MAILCHIMP_DATA_LIST_ID        every registrant (feasibility data + one-off welcome email)
- *   - MAILCHIMP_MARKETING_LIST_ID   only if marketingConsent === true
+ * and writes them into two Mailchimp audiences.
+ *
+ * A SINGLE confirmation email covers both audiences (both are double
+ * opt-in, but only one email is ever sent per person):
+ *   1. POST /register  — always upserts into MAILCHIMP_DATA_LIST_ID
+ *      (Registrations) as status "pending". Mailchimp sends its own
+ *      confirmation email. The person's marketing choice is stashed in
+ *      the MKTOK merge field, but they are NOT added to the Marketing
+ *      audience yet.
+ *   2. POST /webhook/mailchimp — called by Mailchimp when that contact
+ *      confirms (the "Subscribes" event fires on pending -> subscribed).
+ *      If MKTOK was "Y", *now* upsert them into MAILCHIMP_MARKETING_LIST_ID
+ *      as "subscribed" — no second confirmation email, since clicking the
+ *      one link already proved the address and the on-site checkbox
+ *      already captured the consent.
  *
  * Required secrets/vars (see README.md for exact setup steps):
- *   MAILCHIMP_API_KEY        secret, e.g. abcdef123456-us21
- *   MAILCHIMP_SERVER_PREFIX  e.g. us21 (the suffix after the dash in the API key)
- *   MAILCHIMP_DATA_LIST_ID   Audience ID of the "Registrations" audience
+ *   MAILCHIMP_API_KEY          secret, e.g. abcdef123456-us21
+ *   MAILCHIMP_SERVER_PREFIX    e.g. us21 (the suffix after the dash in the API key)
+ *   MAILCHIMP_DATA_LIST_ID     Audience ID of the "Registrations" audience
  *   MAILCHIMP_MARKETING_LIST_ID  Audience ID of the "Marketing Subscribers" audience
- *   ALLOWED_ORIGIN            e.g. https://thegreatestrivalry.com
+ *   MAILCHIMP_WEBHOOK_SECRET   secret, random string you also put in the
+ *                              webhook URL configured in Mailchimp, so
+ *                              random requests to /webhook/mailchimp are
+ *                              rejected (Mailchimp doesn't sign webhooks)
+ *   ALLOWED_ORIGIN              e.g. https://thegreatestrivalry.com
  */
 
 export default {
@@ -29,6 +45,10 @@ export default {
 
     if (url.pathname === "/health") {
       return json({ ok: true }, 200, corsHeaders);
+    }
+
+    if (url.pathname === "/webhook/mailchimp") {
+      return handleMailchimpWebhook(request, env);
     }
 
     if (url.pathname !== "/register" || request.method !== "POST") {
@@ -63,6 +83,7 @@ export default {
       JERSEY: jerseyPreference,
       SIZE: size,
       PRICE: priceBand,
+      MKTOK: marketingConsent ? "Y" : "N",
     };
 
     const jerseyTag =
@@ -71,21 +92,16 @@ export default {
       "Jersey: Both";
 
     try {
-      // 1. Always add to the data/registrations audience, as "pending" so Mailchimp
-      //    sends its own double opt-in confirmation email (matches the "please check
-      //    your inbox and confirm your email" copy on the thank-you screen). The
-      //    welcome-email automation is configured to fire on the *Subscribes* event,
-      //    which only happens once they click that confirmation link.
+      // Only ever write to the data/registrations audience here, as "pending" so
+      // Mailchimp sends its own double opt-in confirmation email (matches the
+      // "please check your inbox and confirm your email" copy on the thank-you
+      // screen). The marketing audience is populated later, by the webhook below,
+      // once this same confirmation is clicked — never here, so nobody gets a
+      // second confirmation email.
       await upsertMember(env, env.MAILCHIMP_DATA_LIST_ID, email, mergeFields, [
         jerseyTag,
         marketingConsent ? "Marketing: Opted in" : "Marketing: Not opted in",
       ], "pending");
-
-      // 2. Only add to the marketing audience if they ticked the box. No extra
-      //    confirmation step here — the on-site checkbox is already their consent.
-      if (marketingConsent) {
-        await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, [jerseyTag], "subscribed");
-      }
 
       return json({ ok: true }, 200, corsHeaders);
     } catch (err) {
@@ -94,6 +110,67 @@ export default {
     }
   },
 };
+
+/**
+ * Mailchimp calls this once (GET) when you save the webhook, to check it
+ * resolves, then POSTs form-encoded (not JSON) bodies as events happen.
+ * We only care about the "subscribe" event on the Registrations audience —
+ * that's the pending -> subscribed transition, i.e. the confirmation click.
+ */
+async function handleMailchimpWebhook(request, env) {
+  if (request.method === "GET") {
+    return new Response("ok", { status: 200 });
+  }
+
+  if (request.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  const url = new URL(request.url);
+  const providedSecret = url.searchParams.get("secret");
+  if (!env.MAILCHIMP_WEBHOOK_SECRET || providedSecret !== env.MAILCHIMP_WEBHOOK_SECRET) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  const raw = await request.text();
+  const params = new URLSearchParams(raw);
+
+  const type = params.get("type");
+  const listId = params.get("data[list_id]");
+  const email = (params.get("data[email]") || "").trim().toLowerCase();
+  const marketingOk = params.get("data[merges][MKTOK]");
+
+  // Always 200 back to Mailchimp for events we deliberately ignore — a
+  // non-2xx response makes Mailchimp retry, and eventually disable, the
+  // webhook, which would silently break real confirmations too.
+  if (type !== "subscribe" || listId !== env.MAILCHIMP_DATA_LIST_ID || marketingOk !== "Y" || !email) {
+    return new Response("ignored", { status: 200 });
+  }
+
+  const jerseyPreference = params.get("data[merges][JERSEY]") || "";
+  const mergeFields = {
+    COUNTRY: params.get("data[merges][COUNTRY]") || "",
+    JERSEY: jerseyPreference,
+    SIZE: params.get("data[merges][SIZE]") || "",
+    PRICE: params.get("data[merges][PRICE]") || "",
+    MKTOK: "Y",
+  };
+  const jerseyTag =
+    jerseyPreference === "sa" ? "Jersey: South Africa" :
+    jerseyPreference === "nz" ? "Jersey: New Zealand" :
+    "Jersey: Both";
+
+  try {
+    await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, [jerseyTag], "subscribed");
+  } catch (err) {
+    console.error(err);
+    // Still 200: this is a background side-effect, not something Mailchimp
+    // retrying will fix (the failure is on our/Mailchimp's API side, not
+    // the webhook delivery), and we don't want the webhook disabled.
+  }
+
+  return new Response("ok", { status: 200 });
+}
 
 async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) {
   const server = env.MAILCHIMP_SERVER_PREFIX;
