@@ -21,7 +21,7 @@
 
       const img = document.createElement("img");
       img.src = src;
-      img.alt = "The Greatest Rivalry jersey concept, image " + (i + 1);
+      img.alt = "The 105 jersey concept, image " + (i + 1);
       img.loading = i === 0 ? "eager" : "lazy";
       img.onerror = function () {
         slide.classList.add("is-placeholder");
@@ -211,7 +211,7 @@
       size: document.getElementById("size").value || null,
       priceBand: document.getElementById("price").value,
       marketingConsent: document.getElementById("marketingConsent").checked,
-      source: "thegreatestrivalry.com"
+      source: "hale-collections.com"
     };
 
     submitBtn.disabled = true;
@@ -277,7 +277,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "greatest-rivalry-story.png";
+      a.download = "the-105-jersey-story.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

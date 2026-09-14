@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker: receives registrations from thegreatestrivalry.com
+ * Cloudflare Worker: receives registrations from hale-collections.com
  * and writes them into two Mailchimp audiences.
  *
  * A SINGLE confirmation email covers both audiences (both are double
@@ -25,7 +25,7 @@
  *                              webhook URL configured in Mailchimp, so
  *                              random requests to /webhook/mailchimp are
  *                              rejected (Mailchimp doesn't sign webhooks)
- *   ALLOWED_ORIGIN              e.g. https://thegreatestrivalry.com
+ *   ALLOWED_ORIGIN              e.g. https://hale-collections.com
  */
 
 export default {
