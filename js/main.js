@@ -59,12 +59,33 @@
   const stageMedia = document.querySelector(".stage-media");
   let touchStartX = 0;
   let touchStartY = 0;
+  let touchIntent = null; // null until decided, then "horizontal" or "vertical"
 
   stageMedia.addEventListener("touchstart", (e) => {
     const t = e.changedTouches[0];
     touchStartX = t.clientX;
     touchStartY = t.clientY;
+    touchIntent = null;
   }, { passive: true });
+
+  // Decide swipe direction as soon as the gesture is big enough to tell, and
+  // if it's horizontal, block the browser's own scroll/bounce for the rest
+  // of this gesture — that's what causes iOS's rubber-band effect when
+  // swiping the carousel, since otherwise the browser doesn't realize it's
+  // a horizontal swipe until touchend, by which point it's already scrolled.
+  stageMedia.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if (!touchIntent && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      touchIntent = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+    }
+
+    if (touchIntent === "horizontal") {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   stageMedia.addEventListener("touchend", (e) => {
     const t = e.changedTouches[0];
