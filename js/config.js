@@ -18,8 +18,7 @@ const CONFIG = {
   priceBands: [
     { id: "3-5k", zarMin: 3000, zarMax: 5000 },
     { id: "5-7k", zarMin: 5000, zarMax: 7000 },
-    { id: "7-10k", zarMin: 7000, zarMax: 10000 },
-    { id: "10k-plus", zarMin: 10000, zarMax: null }
+    { id: "7-10k", zarMin: 7000, zarMax: 10000 }
   ],
 
   sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL"],
