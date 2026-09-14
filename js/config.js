@@ -4,7 +4,7 @@
  */
 const CONFIG = {
   // Where the Cloudflare Worker lives. Update after you deploy it (see README).
-  apiEndpoint: "https://greatest-rivalry-api.yourdomain.workers.dev/register",
+  apiEndpoint: "https://greatest-rivalry-api.hale-collections.workers.dev/register",
 
   // Approximate fixed FX rates, ZAR to 1 unit of foreign currency.
   // e.g. usdRate: 19 means R19 = $1. Edit these whenever you want to refresh pricing.

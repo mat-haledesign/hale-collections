@@ -5,9 +5,9 @@ compatibility_date = "2026-09-01"
 # Non-secret config. Secrets (MAILCHIMP_API_KEY, MAILCHIMP_WEBHOOK_SECRET) are set
 # separately via `wrangler secret put <NAME>` — see README.md.
 [vars]
-MAILCHIMP_SERVER_PREFIX = "us21"
-MAILCHIMP_DATA_LIST_ID = "REPLACE_WITH_DATA_AUDIENCE_ID"
-MAILCHIMP_MARKETING_LIST_ID = "REPLACE_WITH_MARKETING_AUDIENCE_ID"
+MAILCHIMP_SERVER_PREFIX = "us12"
+MAILCHIMP_DATA_LIST_ID = "d8cdda9c99"
+MAILCHIMP_MARKETING_LIST_ID = "34925f35ba"
 ALLOWED_ORIGIN = "https://hale-collections.com"
 
 # Once you have a custom domain on Cloudflare, uncomment and adjust this
