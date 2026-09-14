@@ -101,6 +101,11 @@ export default {
       return json({ ok: true }, 200, corsHeaders);
     } catch (err) {
       console.error(err);
+      if (err.code === "FORGOTTEN_EMAIL") {
+        return json({
+          error: "This email address was previously removed from our list and can't be automatically re-added. Please try a different email address, or contact us directly.",
+        }, 400, corsHeaders);
+      }
       return json({ error: "Registration failed" }, 502, corsHeaders);
     }
   },
@@ -183,6 +188,19 @@ async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) 
 
   if (!res.ok) {
     const errText = await res.text();
+
+    // A contact that was permanently deleted (GDPR erasure) can never be
+    // re-added via the API, by Mailchimp's design — only by genuinely
+    // re-subscribing through an actual signup form. Surface this distinctly
+    // so the site can show something more useful than a generic failure.
+    let mailchimpTitle;
+    try { mailchimpTitle = JSON.parse(errText).title; } catch (e) { /* not JSON */ }
+    if (mailchimpTitle === "Forgotten Email Not Subscribed") {
+      const err = new Error(`Mailchimp upsert failed (${res.status}) for list ${listId}: ${errText}`);
+      err.code = "FORGOTTEN_EMAIL";
+      throw err;
+    }
+
     throw new Error(`Mailchimp upsert failed (${res.status}) for list ${listId}: ${errText}`);
   }
 

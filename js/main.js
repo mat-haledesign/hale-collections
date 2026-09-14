@@ -226,13 +226,18 @@
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error("Request failed: " + res.status);
+      if (!res.ok) {
+        let serverMessage;
+        try { serverMessage = (await res.json()).error; } catch (e) { /* not JSON */ }
+        throw new Error(serverMessage || ("Request failed: " + res.status));
+      }
 
       state.lastSubmission = payload;
       showView("thankyou");
     } catch (err) {
       console.error(err);
-      showStatus("Something went wrong — please try again in a moment.", true);
+      const isKnownMessage = err.message && !/^Request failed:/.test(err.message);
+      showStatus(isKnownMessage ? err.message : "Something went wrong — please try again in a moment.", true);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "Count Me In";
