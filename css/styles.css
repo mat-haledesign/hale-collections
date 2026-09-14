@@ -973,6 +973,34 @@ a {
   font-weight: 700;
 }
 
+.policy-facts {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: .85rem;
+  border: 1px solid rgba(18, 41, 33, 0.15);
+}
+
+.policy-facts th,
+.policy-facts td {
+  text-align: left;
+  padding: .6rem .9rem;
+  border-bottom: 1px solid rgba(18, 41, 33, 0.15);
+  font-weight: 400;
+  vertical-align: top;
+}
+
+.policy-facts tr:last-child th,
+.policy-facts tr:last-child td {
+  border-bottom: none;
+}
+
+.policy-facts th {
+  width: 40%;
+  font-weight: 700;
+  background: rgba(18, 41, 33, 0.05);
+}
+
 .policy-footer {
   margin-top: 4vh;
   text-align: right;
