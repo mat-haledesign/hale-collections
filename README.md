@@ -80,16 +80,22 @@ You need **two audiences**:
 
 | Audience | Purpose |
 |---|---|
-| **Greatest Rivalry — Registrations** | Every single registrant, regardless of the marketing checkbox. This is your feasibility-study data and also triggers the one-off welcome email. |
+| **Greatest Rivalry — Registrations** | Every single registrant, regardless of the marketing checkbox. This is your feasibility-study data, sends Mailchimp's own confirmation email ("please check your inbox and confirm your email" on the thank-you screen), and triggers the welcome email once confirmed. |
 | **Greatest Rivalry — Marketing Subscribers** | Only people who ticked "I agree to receive updates…". Use this for future campaign sends. |
 
 Steps:
 
 1. **Create the two audiences**: Audience → Create Audience, twice, named as above.
-2. **Turn off double opt-in** on both (Audience → Settings → Audience name and defaults →
-   uncheck "Enable double opt-in"). The Worker adds people as `subscribed` directly since
-   they've already actively filled in a form — you don't want a second confirmation email
-   blocking your welcome email or your feasibility count.
+2. **Double opt-in setting differs per audience**:
+   - **Registrations**: leave double opt-in **on** (default). The Worker adds new
+     contacts here with `status: "pending"`, which makes Mailchimp automatically send
+     its own confirmation email — this *is* the "confirm your email" step promised on
+     the thank-you screen, no custom email infrastructure needed. They only count as
+     `subscribed` once they click it.
+   - **Marketing Subscribers**: **turn off** double opt-in (Audience → Settings →
+     Audience name and defaults → uncheck "Enable double opt-in"). The Worker adds
+     people here as `subscribed` directly — their consent was already captured by the
+     on-site checkbox, so a second confirmation email would just be friction.
 3. **Add merge fields** to *both* audiences (Audience → Settings → Audience fields and
    *MERGE* tags → Add A Field), using these exact tags so they match the Worker:
    - `COUNTRY` (text)
@@ -101,9 +107,11 @@ Steps:
 5. **Get each Audience ID**: Audience → Settings → Audience name and defaults → *Audience ID*.
 6. **Set up the welcome email** (this is the "send everyone a nice welcome/info email"
    step): Audience → Automations → Create → "When someone joins a list" (a classic
-   automation) → pick the **Registrations** audience as the trigger → design your welcome
-   email (jersey images, project story, etc.) → turn it **on**. It'll fire automatically
-   every time the Worker adds a new subscribed contact.
+   automation, trigger event **Subscribes**) → pick the **Registrations** audience as the
+   trigger → design your welcome email (jersey images, project story, etc.) → turn it
+   **on**. Because Registrations uses double opt-in, "Subscribes" fires once someone
+   clicks the confirmation link in Mailchimp's own email — so people get exactly two
+   emails in sequence: Mailchimp's confirmation, then your welcome email.
 7. Keep the **Marketing Subscribers** audience automation-free for now — you'll send
    manual campaigns to it later when you have updates to share.
 
@@ -187,8 +195,10 @@ Pages' automatic HTTPS/certificate), do this:
 - [ ] Carousel arrows work on both mobile and desktop widths
 - [ ] Form validation catches missing email / country / jersey / price
 - [ ] Submitting a real test entry appears in **both** Mailchimp audiences when opted
-      in, and **only** the Registrations audience when not opted in
-- [ ] Welcome-email automation fires within a minute of test registration
+      in (Registrations as `pending`, Marketing as `subscribed`), and **only** the
+      Registrations audience (as `pending`) when not opted in
+- [ ] Mailchimp's confirmation email arrives for the test registration; clicking it
+      flips the contact to `subscribed` and the welcome-email automation fires shortly after
 - [ ] "Download for Stories" produces a 1080×1920 PNG with the right jersey colour
 - [ ] "Share on WhatsApp" opens with pre-filled text and link
 - [ ] "Copy Link" copies the URL (and has a clipboard-denied fallback via `prompt()`)

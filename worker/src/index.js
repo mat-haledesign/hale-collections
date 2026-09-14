@@ -71,15 +71,20 @@ export default {
       "Jersey: Both";
 
     try {
-      // 1. Always add to the data/registrations audience (drives the welcome email automation).
+      // 1. Always add to the data/registrations audience, as "pending" so Mailchimp
+      //    sends its own double opt-in confirmation email (matches the "please check
+      //    your inbox and confirm your email" copy on the thank-you screen). The
+      //    welcome-email automation is configured to fire on the *Subscribes* event,
+      //    which only happens once they click that confirmation link.
       await upsertMember(env, env.MAILCHIMP_DATA_LIST_ID, email, mergeFields, [
         jerseyTag,
         marketingConsent ? "Marketing: Opted in" : "Marketing: Not opted in",
-      ]);
+      ], "pending");
 
-      // 2. Only add to the marketing audience if they ticked the box.
+      // 2. Only add to the marketing audience if they ticked the box. No extra
+      //    confirmation step here — the on-site checkbox is already their consent.
       if (marketingConsent) {
-        await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, [jerseyTag]);
+        await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, [jerseyTag], "subscribed");
       }
 
       return json({ ok: true }, 200, corsHeaders);
@@ -90,7 +95,7 @@ export default {
   },
 };
 
-async function upsertMember(env, listId, email, mergeFields, tags) {
+async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) {
   const server = env.MAILCHIMP_SERVER_PREFIX;
   const hash = await md5Hex(email);
   const endpoint = `https://${server}.api.mailchimp.com/3.0/lists/${listId}/members/${hash}`;
@@ -103,7 +108,7 @@ async function upsertMember(env, listId, email, mergeFields, tags) {
     },
     body: JSON.stringify({
       email_address: email,
-      status_if_new: "subscribed",
+      status_if_new: statusIfNew,
       merge_fields: mergeFields,
     }),
   });
