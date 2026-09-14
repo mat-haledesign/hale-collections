@@ -97,7 +97,15 @@
   }
 
   document.querySelectorAll(".theme-toggle__btn").forEach(btn => {
-    btn.addEventListener("click", () => setTheme(btn.dataset.themeChoice));
+    btn.addEventListener("click", () => {
+      setTheme(btn.dataset.themeChoice);
+      // On mobile the carousel and panel are stacked vertically, so a user
+      // scrolled down to the panel wouldn't see the new theme's images
+      // without this — desktop is a fixed side-by-side layout, no scroll needed.
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
   });
 
   /* ---------------- Panel view switching ---------------- */
