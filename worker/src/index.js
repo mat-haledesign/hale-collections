@@ -86,11 +86,6 @@ export default {
       MKTOK: marketingConsent ? "Y" : "N",
     };
 
-    const jerseyTag =
-      jerseyPreference === "sa" ? "Jersey: South Africa" :
-      jerseyPreference === "nz" ? "Jersey: New Zealand" :
-      "Jersey: Both";
-
     try {
       // Only ever write to the data/registrations audience here, as "pending" so
       // Mailchimp sends its own double opt-in confirmation email (matches the
@@ -99,8 +94,8 @@ export default {
       // once this same confirmation is clicked — never here, so nobody gets a
       // second confirmation email.
       await upsertMember(env, env.MAILCHIMP_DATA_LIST_ID, email, mergeFields, [
-        jerseyTag,
-        marketingConsent ? "Marketing: Opted in" : "Marketing: Not opted in",
+        ...jerseyTagSet(jerseyPreference),
+        ...marketingTagSet(marketingConsent),
       ], "pending");
 
       return json({ ok: true }, 200, corsHeaders);
@@ -155,13 +150,9 @@ async function handleMailchimpWebhook(request, env) {
     PRICE: params.get("data[merges][PRICE]") || "",
     MKTOK: "Y",
   };
-  const jerseyTag =
-    jerseyPreference === "sa" ? "Jersey: South Africa" :
-    jerseyPreference === "nz" ? "Jersey: New Zealand" :
-    "Jersey: Both";
 
   try {
-    await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, [jerseyTag], "subscribed");
+    await upsertMember(env, env.MAILCHIMP_MARKETING_LIST_ID, email, mergeFields, jerseyTagSet(jerseyPreference), "subscribed");
   } catch (err) {
     console.error(err);
     // Still 200: this is a background side-effect, not something Mailchimp
@@ -195,7 +186,12 @@ async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) 
     throw new Error(`Mailchimp upsert failed (${res.status}) for list ${listId}: ${errText}`);
   }
 
-  // Tags are set via a separate endpoint.
+  // Tags are set via a separate endpoint. Mailchimp's tag API is additive by
+  // default — it only ever turns tags *on*, never off, so re-registering with a
+  // different jersey/marketing choice would otherwise leave the old tag stuck
+  // alongside the new one. `tags` here must always be the FULL set of related
+  // tags with the correct active/inactive status on each, not just the "on" ones,
+  // so re-tagging is exclusive rather than additive.
   const tagRes = await fetch(endpoint + "/tags", {
     method: "POST",
     headers: {
@@ -203,7 +199,7 @@ async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) 
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      tags: tags.map(name => ({ name, status: "active" })),
+      tags: tags.map(t => ({ name: t.name, status: t.active ? "active" : "inactive" })),
     }),
   });
 
@@ -211,6 +207,23 @@ async function upsertMember(env, listId, email, mergeFields, tags, statusIfNew) 
     const errText = await tagRes.text();
     throw new Error(`Mailchimp tagging failed (${tagRes.status}) for list ${listId}: ${errText}`);
   }
+}
+
+const JERSEY_TAGS = ["Jersey: South Africa", "Jersey: New Zealand", "Jersey: Both"];
+
+function jerseyTagSet(jerseyPreference) {
+  const active =
+    jerseyPreference === "sa" ? "Jersey: South Africa" :
+    jerseyPreference === "nz" ? "Jersey: New Zealand" :
+    "Jersey: Both";
+  return JERSEY_TAGS.map(name => ({ name, active: name === active }));
+}
+
+const MARKETING_TAGS = ["Marketing: Opted in", "Marketing: Not opted in"];
+
+function marketingTagSet(marketingConsent) {
+  const active = marketingConsent ? "Marketing: Opted in" : "Marketing: Not opted in";
+  return MARKETING_TAGS.map(name => ({ name, active: name === active }));
 }
 
 function isValidEmail(email) {
