@@ -250,11 +250,11 @@ a {
   transform: translateY(-50%) scale(.95);
 }
 
-/* Dot indicators: hidden on desktop (arrows are used there instead),
-   shown only on mobile in place of the arrows — see the max-width:900px
-   block below, which swaps the two. */
+/* Dot indicators: shown alongside the arrows on desktop, and in place
+   of the arrows on mobile (arrows are hidden there — see the
+   max-width:900px block below). */
 .stage-media__dots {
-  display: none;
+  display: flex;
   position: absolute;
   left: 0;
   right: 0;
@@ -679,13 +679,10 @@ a {
     min-height: 0;
   }
 
-  /* Swipe replaces arrows on mobile — dots just indicate position/swipeability. */
+  /* Arrows are replaced by swipe on mobile; dots stay visible (shown on
+     both breakpoints via the base rule above). */
   .stage-media__arrow {
     display: none;
-  }
-
-  .stage-media__dots {
-    display: flex;
   }
 
   .stage-panel {
