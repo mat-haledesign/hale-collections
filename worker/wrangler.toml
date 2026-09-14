@@ -1,4 +1,4 @@
-name = "greatest-rivalry-api"
+name = "the-105-jersey-api"
 main = "src/index.js"
 compatibility_date = "2026-09-01"
 
@@ -9,9 +9,3 @@ MAILCHIMP_SERVER_PREFIX = "us12"
 MAILCHIMP_DATA_LIST_ID = "d8cdda9c99"
 MAILCHIMP_MARKETING_LIST_ID = "34925f35ba"
 ALLOWED_ORIGIN = "https://hale-collections.com"
-
-# Once you have a custom domain on Cloudflare, uncomment and adjust this
-# so the worker is reachable at https://hale-collections.com/api/*
-# [[routes]]
-# pattern = "hale-collections.com/api/*"
-# zone_name = "hale-collections.com"

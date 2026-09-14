@@ -1,5 +1,5 @@
 {
-  "name": "greatest-rivalry-api",
+  "name": "the-105-jersey-api",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
