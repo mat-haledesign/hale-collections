@@ -33,27 +33,27 @@ const CONFIG = {
   // using these exact filenames, or edit the paths below to match what you supply.
   carousel: {
     sa: [
-      "assets/images/sa/01-hero.png",
-      "assets/images/sa/02-chest.png",
-      "assets/images/sa/03-collar.png",
-      "assets/images/sa/04-back.png",
-      "assets/images/sa/05-tag.png",
-      "assets/images/sa/06-sleeve.png"
+      "assets/images/sa/01-hero.webp",
+      "assets/images/sa/02-chest.webp",
+      "assets/images/sa/03-collar.webp",
+      "assets/images/sa/04-back.webp",
+      "assets/images/sa/05-tag.webp",
+      "assets/images/sa/06-sleeve.webp"
     ],
     nz: [
-      "assets/images/nz/01-hero.png",
-      "assets/images/nz/02-chest.png",
-      "assets/images/nz/03-collar.png",
-      "assets/images/nz/04-back.png",
-      "assets/images/nz/05-tag.png",
-      "assets/images/nz/06-sleeve.png"
+      "assets/images/nz/01-hero.webp",
+      "assets/images/nz/02-chest.webp",
+      "assets/images/nz/03-collar.webp",
+      "assets/images/nz/04-back.webp",
+      "assets/images/nz/05-tag.webp",
+      "assets/images/nz/06-sleeve.webp"
     ]
   },
 
   // Full-bleed portrait image used as the background for the "download for stories" image.
   storyTemplate: {
-    sa: "assets/images/sa/07-download.png",
-    nz: "assets/images/nz/07-download.png"
+    sa: "assets/images/sa/07-download.webp",
+    nz: "assets/images/nz/07-download.webp"
   },
 
   logo: {
