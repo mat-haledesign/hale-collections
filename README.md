@@ -41,8 +41,11 @@ Both fonts are free Google Fonts, loaded via the `@import` at the top of
 
 Carousel photography lives in `assets/images/sa/` and `assets/images/nz/` as `.webp`
 (compressed for fast mobile loading), using the filenames listed in `js/config.js` →
-`CONFIG.carousel`. `07-download.webp` in each folder is a separate, finished
-1080×1920 graphic used as-is for "Download for Stories" — not composited at runtime.
+`CONFIG.carousel`. `download_sa.webp`/`download_nz.webp` in each folder is a separate,
+finished portrait graphic used as-is for "Download for Stories" — not composited at
+runtime. When adding new source images, resize to a ~1600px long edge and convert to
+`.webp` (quality ~82 with `sharp` works well) before committing — there's no build step
+in the repo, so this is a manual one-off pass each time.
 
 If a listed image file is missing, the carousel shows a clearly-labelled placeholder
 naming exactly which file is missing, so the site still works without it.
