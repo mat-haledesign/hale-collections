@@ -24,7 +24,12 @@
       const img = document.createElement("img");
       img.src = src;
       img.alt = "The 105 jersey concept, image " + (i + 1);
-      img.loading = i === 0 ? "eager" : "lazy";
+      // All slides sit stacked in the same spot (opacity toggle, not
+      // display:none), so they're in-viewport from the start — "lazy"
+      // wouldn't actually defer anything here, just be misleading. Load
+      // them all now, but let the browser prioritize the visible one first.
+      img.loading = "eager";
+      img.fetchPriority = i === 0 ? "high" : "low";
       img.onerror = function () {
         slide.classList.add("is-placeholder");
         slide.innerHTML = "Add photo:<br>" + src;
@@ -54,6 +59,21 @@
 
   document.getElementById("mediaPrev").addEventListener("click", () => showSlide(state.slideIndex - 1));
   document.getElementById("mediaNext").addEventListener("click", () => showSlide(state.slideIndex + 1));
+
+  // Warm the browser's cache for the theme the visitor isn't currently
+  // looking at, so an SA <-> NZ toggle feels instant. Deferred to idle
+  // time so it never competes with the active theme's own images.
+  function idlePrefetchOtherTheme() {
+    const other = state.theme === "sa" ? "nz" : "sa";
+    const run = () => {
+      (CONFIG.carousel[other] || []).forEach(src => { new Image().src = src; });
+    };
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(run, { timeout: 3000 });
+    } else {
+      setTimeout(run, 2000);
+    }
+  }
 
   /* Swipe support (mobile). Arrow buttons above keep working as-is. */
   const stageMedia = document.querySelector(".stage-media");
@@ -323,6 +343,7 @@
 
   populateSelects();
   setTheme("sa", { animate: false });
+  idlePrefetchOtherTheme();
 
   // Testing aid: open index.html?view=thankyou to preview that screen
   // directly, without submitting the form or needing the backend live.
