@@ -166,6 +166,13 @@ a {
   background: #000;
   overflow: hidden;
   min-height: 45vh;
+  /* Without this, iOS Safari's own gesture recognizer can start a native
+     pan/rubber-band on this element before our touchmove handler's
+     preventDefault() takes effect, which is what caused the whole-page
+     bounce on swipe. pan-y hands vertical touches to the browser as
+     normal (so page scroll still works) but opts this element out of
+     native horizontal handling entirely, leaving that to our JS. */
+  touch-action: pan-y;
 }
 
 .stage-media__track {
