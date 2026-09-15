@@ -315,7 +315,7 @@
   /* ---------------- Download for stories ---------------- */
 
   // storyTemplate images are already finished, ready-to-post graphics
-  // (headline, CTA and watermark baked in by design) — just download them
+  // (headline, CTA and watermark baked in by design) — just hand them off
   // as-is, no canvas compositing on top.
   document.getElementById("downloadStory").addEventListener("click", async function () {
     const jersey = document.getElementById("jersey").value || state.theme;
@@ -325,10 +325,29 @@
       const res = await fetch(imgSrc);
       if (!res.ok) throw new Error("Story image not found: " + imgSrc);
       const blob = await res.blob();
+      const ext = (blob.type.split("/")[1] || "png").replace("jpeg", "jpg");
+      const filename = `the-105-jersey-story.${ext}`;
+      const file = new File([blob], filename, { type: blob.type || "image/png" });
+
+      // On mobile, hand the image straight to the OS share sheet so the
+      // user can pick Instagram (or WhatsApp, Messages, etc.) with the
+      // image already attached, instead of downloading then hunting for
+      // it themselves. Desktop and unsupported browsers fall through to
+      // a plain download below.
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: "The 105 Jersey", text: CONFIG.shareText });
+          return;
+        } catch (shareErr) {
+          if (shareErr.name === "AbortError") return; // user cancelled the share sheet
+          // Any other share failure: fall through to a plain download instead.
+        }
+      }
+
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "the-105-jersey-story.png";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
