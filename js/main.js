@@ -336,7 +336,7 @@
       // a plain download below.
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({ files: [file], title: "The 105 Jersey", text: CONFIG.shareText });
+          await navigator.share({ files: [file], title: "The 105 Jersey", text: CONFIG.shareText + " " + CONFIG.shareUrl });
           return;
         } catch (shareErr) {
           if (shareErr.name === "AbortError") return; // user cancelled the share sheet
