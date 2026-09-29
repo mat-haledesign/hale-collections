@@ -293,6 +293,13 @@
           content_category: "jersey_registration"
         });
       }
+      // GA4's equivalent recommended conversion event, same trigger point.
+      if (typeof gtag === "function") {
+        gtag("event", "generate_lead", {
+          jersey_preference: payload.jerseyPreference,
+          price_band: payload.priceBand
+        });
+      }
       showView("thankyou");
     } catch (err) {
       console.error(err);
