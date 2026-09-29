@@ -284,6 +284,15 @@
       }
 
       state.lastSubmission = payload;
+      // Meta's "Lead" is the standard event for a completed interest-registration
+      // form — the actual conversion this site exists to capture, distinct from
+      // the PageView the base pixel code already fires on every page load.
+      if (typeof fbq === "function") {
+        fbq("track", "Lead", {
+          content_name: payload.jerseyPreference,
+          content_category: "jersey_registration"
+        });
+      }
       showView("thankyou");
     } catch (err) {
       console.error(err);
