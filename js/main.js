@@ -150,11 +150,12 @@
   document.querySelectorAll(".theme-toggle__btn").forEach(btn => {
     btn.addEventListener("click", () => {
       setTheme(btn.dataset.themeChoice);
-      // On mobile the carousel and panel are stacked vertically, so a user
-      // scrolled down to the panel wouldn't see the new theme's images
-      // without this — desktop is a fixed side-by-side layout, no scroll needed.
+      // On mobile the carousel and panel are stacked vertically (carousel
+      // below the panel), so a user needs to be scrolled to it to see the
+      // new theme's images — desktop is a fixed side-by-side layout, no
+      // scroll needed.
       if (window.matchMedia("(max-width: 900px)").matches) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        stageMedia.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     });
   });
