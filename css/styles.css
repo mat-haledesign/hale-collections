@@ -684,6 +684,12 @@ a {
     flex: none;
     aspect-ratio: 3 / 4;
     min-height: 0;
+    /* Visual-only reorder below the content panel — DOM order (and
+       therefore tab/reading order) is untouched, this is purely how it
+       paints, so users hit the headline/CTA before having to scroll.
+       Applies at every mobile width, including the narrower breakpoint
+       below, since that block never overrides `order` itself. */
+    order: 2;
   }
 
   /* Arrows are replaced by swipe on mobile; dots stay visible (shown on
@@ -693,6 +699,7 @@ a {
   }
 
   .stage-panel {
+    order: 1;
     flex: none;
     max-width: none;
     min-width: 0;
